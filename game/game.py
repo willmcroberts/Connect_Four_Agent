@@ -18,7 +18,30 @@ class connect_four:
         raise ValueError("Column is full")
 
     def check_win(self, player):
-        print()
+        # Check horizontal
+        for r in range(6):
+            for c in range(4):
+                if all(self.board[r][c+i] == player for i in range(4)):
+                    return True
+
+        # Check vertical
+        for r in range(3):
+            for c in range(7):
+                if all(self.board[r+i][c] == player for i in range(4)):
+                    return True
+        # Check diagonals
+
+        for r in range(3):
+            for c in range(4):
+                if all(self.board[r+i][c+i] == player for i in range(4)):
+                    return True
+
+        for r in range(3):
+            for c in range(3,7):
+                if all(self.board[r+i][c-i] == player for i in range(4)):
+                    return True
+
+        return None
 
     def is_draw(self):
         print()
