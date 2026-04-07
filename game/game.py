@@ -29,8 +29,8 @@ class connect_four:
             for c in range(7):
                 if all(self.board[r+i][c] == player for i in range(4)):
                     return True
-        # Check diagonals
 
+        # Check diagonals
         for r in range(3):
             for c in range(4):
                 if all(self.board[r+i][c+i] == player for i in range(4)):
@@ -44,7 +44,7 @@ class connect_four:
         return None
 
     def is_draw(self):
-        print()
+        return len(self.legal_moves()) == 0
 
     def copy(self):
         new_env = connect_four()
