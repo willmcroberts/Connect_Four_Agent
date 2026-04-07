@@ -7,14 +7,13 @@ def run_connect_four():
     current_player = 1
 
     while True:
-        print("\nCurrent board:")
+        print("\n")
         game.print_board()
 
         legal = game.legal_moves()
-        print("Legal moves:", legal)
 
         while True:
-            raw = input(f"Player {current_player}, choose a column: ").strip()
+            raw = input(f"\nPlayer {current_player}, choose a column: ").strip()
             if raw.isdigit():
                 move = int(raw)
                 break
@@ -28,12 +27,12 @@ def run_connect_four():
 
         if game.check_win(current_player):
             game.print_board()
-            print(f"Player {current_player} wins!")
+            print(f"\nPlayer {current_player} wins!")
             break
 
         if game.is_draw():
             game.print_board()
-            print("It's a draw!")
+            print("\nIt's a draw!")
             break
 
         current_player = 2 if current_player == 1 else 1
