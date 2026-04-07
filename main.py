@@ -1,9 +1,9 @@
 # main.py
 
-from game import connect_four
+from game.game import connect_four_game
 
 def run_connect_four():
-    game = __name__()
+    game = connect_four_game()
     current_player = 1
 
     while True:
@@ -13,7 +13,12 @@ def run_connect_four():
         legal = game.legal_moves()
         print("Legal moves:", legal)
 
-        move = int(input(f"Player {current_player}, choose a column: "))
+        while True:
+            raw = input(f"Player {current_player}, choose a column: ").strip()
+            if raw.isdigit():
+                move = int(raw)
+                break
+            print("Please enter a number between 0 and 6.")
 
         if move not in legal:
             print("Illegal move, try again.")

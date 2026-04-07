@@ -2,7 +2,7 @@
 
 from . import minimax
 
-class connect_four:
+class connect_four_game:
 
     def __init__(self):
         self.board = [[0 for _ in range(7)] for _ in range(6)]
@@ -47,12 +47,25 @@ class connect_four:
         return len(self.legal_moves()) == 0
 
     def copy(self):
-        new_env = connect_four()
+        new_env = connect_four_game()
         new_env.board = [row[:] for row in self.board]
         return new_env
 
     def print_board(self):
-        symbols = {0: ".", 1: "R", 2: "Y"}
+        RESET = "\033[0m"
+        RED = "\033[91m"
+        YELLOW = "\033[93m"
+        BLUE = "\033[94m"
+
+        def color(cell):
+            if cell == 1:
+                return RED + "R" + RESET
+            elif cell == 2:
+                return YELLOW + "Y" + RESET
+            else:
+                return BLUE + "." + RESET
+
         for row in self.board:
-            print(" ".join(symbols[cell] for cell in row))
+            print(" ".join(color(c) for c in row))
+
         print("0 1 2 3 4 5 6")
