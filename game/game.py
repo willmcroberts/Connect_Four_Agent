@@ -52,4 +52,7 @@ class connect_four:
         return new_env
 
     def print_board(self):
-        print()
+        symbols = {0: ".", 1: "R", 2: "Y"}
+        for row in self.board:
+            print(" ".join(symbols[cell] for cell in row))
+        print("0 1 2 3 4 5 6")
