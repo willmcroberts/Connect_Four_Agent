@@ -24,7 +24,9 @@ class connect_four:
         print()
 
     def copy(self):
-        print()
+        new_env = connect_four()
+        new_env.board = [row[:] for row in self.board]
+        return new_env
 
     def print_board(self):
         print()
