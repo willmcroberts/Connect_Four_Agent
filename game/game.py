@@ -41,7 +41,7 @@ class connect_four_game:
                 if all(self.board[r+i][c-i] == player for i in range(4)):
                     return True
 
-        return None
+        return False
 
     def is_draw(self):
         return len(self.legal_moves()) == 0
