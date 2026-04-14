@@ -63,13 +63,13 @@ def minimax(game, depth, alpha, beta, maximizing_player):
     if depth == 0 or terminal:
         if terminal:
             if game.check_win(MINNIE_MAXWELL):
-                return (None, 1000000000)
+                return None, 1000000000
             elif game.check_win(PLAYER):
-                return (None, -1000000000)
+                return None, -1000000000
             else:
-                return(None, 0)
+                return None, 0
         else:
-            return (None, score_position(game, MINNIE_MAXWELL))
+            return None, score_position(game, MINNIE_MAXWELL)
 
     if maximizing_player:
         value = -math.inf
