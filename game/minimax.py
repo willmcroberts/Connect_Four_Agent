@@ -105,3 +105,8 @@ def minimax(game, depth, alpha, beta, maximizing_player):
             if alpha >= beta:
                 break
         return best_column, value
+
+def best_move(game):
+    column, score = minimax(game, MAX_DEPTH, -math.inf, math.inf, True)
+
+    return column
