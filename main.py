@@ -1,10 +1,32 @@
 # main.py
 
 from game.game import connect_four_game
+from game import minimax
+
+
+def get_human_move(game, current_player):
+    legal = game.legal_moves()
+
+    while True:
+        raw = input(
+            f"\nPlayer {current_player}, choose a column (0–6): "
+        ).strip()
+
+        if raw.isdigit():
+            move = int(raw)
+
+            if move in legal:
+                return move
+
+        print("Illegal move, try again.")
+
 
 def run_connect_four():
     game = connect_four_game()
     current_player = 1
+
+    print("\nWelcome to Connect Four!")
+    print("You are Player 1 (Red). AI is Player 2 (Yellow).")
 
     while True:
         print("\n")
@@ -12,34 +34,45 @@ def run_connect_four():
 
         legal = game.legal_moves()
 
-        while True:
-            raw = input(f"\nPlayer {current_player}, choose a column (0–6): ").strip()
+        if current_player == 1:
 
-            if raw.isdigit():
-                move = int(raw)
+            move = get_human_move(
+                game,
+                current_player
+            )
 
-                if 0 <= move <= 6:
-                    break
+        else:
 
-            print("Please enter a number between 0 and 6.")
+            print("\nAI is thinking...")
 
-        if move not in legal:
-            print("Illegal move, try again.")
-            continue
+            move = minimax.best_move(game)
 
-        game.apply_move(move, current_player)
+        game.apply_move(
+            move,
+            current_player
+        )
 
         if game.check_win(current_player):
+
             game.print_board()
-            print(f"\nPlayer {current_player} wins!")
+
+            if current_player == 1:
+                print("\nYou win!")
+            else:
+                print("\nAI wins!")
+
             break
 
         if game.is_draw():
+
             game.print_board()
             print("\nIt's a draw!")
+
             break
 
-        current_player = 2 if current_player == 1 else 1
+        current_player = (
+            2 if current_player == 1 else 1
+        )
 
 
 if __name__ == "__main__":
