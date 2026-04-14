@@ -54,3 +54,54 @@ def check_terminal(game):
         game.check_win(PLAYER) or
         game.is_draw()
     )
+
+def minimax(game, depth, alpha, beta, maximizing_player):
+
+    legal_moves = game.legal_moves()
+    terminal = check_terminal(game)
+
+    if depth == 0 or terminal:
+        if terminal:
+            if game.check_win(MINNIE_MAXWELL):
+                return (None, 1000000000)
+            elif game.check_win(PLAYER):
+                return (None, -1000000000)
+            else:
+                return(None, 0)
+        else:
+            return (None, score_position(game, MINNIE_MAXWELL))
+
+    if maximizing_player:
+        value = -math.inf
+        best_column = random.choice(legal_moves)
+
+        for col in legal_moves:
+            new_game = game.copy()
+            new_game.apply_move(col, MINNIE_MAXWELL)
+
+            new_score = minimax(new_game, depth - 1, alpha, beta, False)[1]
+
+            alpha = max(alpha, value)
+
+            if alpha >= beta:
+                break
+        return best_column, value
+    else:
+        value = math.inf
+        best_column = random.choice(legal_moves)
+
+        for col in legal_moves:
+            new_game = game.copy()
+            new_game.apply_move(col, PLAYER)
+
+            new_score = minimax(new_game, depth - 1, alpha, beta, True)[1]
+
+            if new_score < value:
+                value = new_score
+                best_column = col
+
+            beta = min(beta, value)
+
+            if alpha >= beta:
+                break
+        return best_column, value
