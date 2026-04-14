@@ -13,10 +13,14 @@ def run_connect_four():
         legal = game.legal_moves()
 
         while True:
-            raw = input(f"\nPlayer {current_player}, choose a column: ").strip()
+            raw = input(f"\nPlayer {current_player}, choose a column (0–6): ").strip()
+
             if raw.isdigit():
                 move = int(raw)
-                break
+
+                if 0 <= move <= 6:
+                    break
+
             print("Please enter a number between 0 and 6.")
 
         if move not in legal:
