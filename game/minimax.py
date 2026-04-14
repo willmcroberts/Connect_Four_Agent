@@ -47,3 +47,10 @@ def score_position(game, player):
                 score += scoring(window, player)
         return score
     return None
+
+def check_terminal(game):
+    return (
+        game.check_win(MINNIE_MAXWELL) or
+        game.check_win(PLAYER) or
+        game.is_draw()
+    )
