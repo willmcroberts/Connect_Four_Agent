@@ -7,7 +7,7 @@ MINNIE_MAXWELL = 2
 PLAYER = 1
 MAX_DEPTH = 4
 
-def evaluation(window, player):
+def scoring(window, player):
     score = 0
     opponent = PLAYER if player == MINNIE_MAXWELL else MINNIE_MAXWELL
 
@@ -21,3 +21,29 @@ def evaluation(window, player):
         score -= 4
 
     return score
+
+def score_position(game, player):
+    board = game.board
+    score = 0
+
+    center_column = [board[r][3] for r in range(6)]
+    score += center_column.count(player) * 3
+    # The center column is the best position on the board, because it allows for the most winning moves
+
+    for c in range(7):
+        column_array = [board[r][c] for r in range(6)]
+
+        for r in range(3):
+            window = column_array[r:r + 4]
+            score += scoring(window, player)
+
+        for r in range(3):
+            for c in range(4):
+                window = [board[r + i][c + i] for i in range(4)]
+                score += scoring(window, player)
+        for r in range(3):
+            for c in range(3,7):
+                window = [board[r+i][c-i] for i in range(4)]
+                score += scoring(window, player)
+        return score
+    return None
