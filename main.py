@@ -2,6 +2,7 @@
 
 from game.game import connect_four_game
 from game import minimax
+import time
 
 
 def get_human_move(game, current_player):
@@ -27,6 +28,7 @@ def run_connect_four():
 
     print("\nWelcome to Connect Four!")
     print("You are Player 1 (Red). AI is Player 2 (Yellow).")
+    difficulty = input("1) Easy    2) Medium    3) Hard")
 
     while True:
         print("\n")
@@ -44,6 +46,7 @@ def run_connect_four():
         else:
 
             print("\nAI is thinking...")
+            time.sleep(1)
 
             move = minimax.best_move(game)
 
