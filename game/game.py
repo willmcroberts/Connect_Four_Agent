@@ -1,7 +1,5 @@
 # game.py
 
-from . import minimax
-
 class connect_four_game:
 
     def __init__(self):

@@ -22,19 +22,40 @@ def get_human_move(game, current_player):
         print("Illegal move, try again.")
 
 
+def choose_difficulty():
+    while True:
+
+        print("\nSelect Difficulty:")
+        print("1) Easy")
+        print("2) Medium")
+        print("3) Hard")
+
+        choice = input("Enter choice: ").strip()
+
+        if choice == "1":
+            return 3
+        elif choice == "2":
+            return 5
+        elif choice == "3":
+            return 7
+        else:
+            print("Invalid selection. Try again.")
+
+
 def run_connect_four():
+
     game = connect_four_game()
     current_player = 1
 
     print("\nWelcome to Connect Four!")
     print("You are Player 1 (Red). AI is Player 2 (Yellow).")
-    difficulty = input("1) Easy    2) Medium    3) Hard")
+
+    ai_depth = choose_difficulty()
 
     while True:
+
         print("\n")
         game.print_board()
-
-        legal = game.legal_moves()
 
         if current_player == 1:
 
@@ -48,7 +69,10 @@ def run_connect_four():
             print("\nAI is thinking...")
             time.sleep(1)
 
-            move = minimax.best_move(game)
+            move = minimax.best_move(
+                game,
+                ai_depth
+            )
 
         game.apply_move(
             move,

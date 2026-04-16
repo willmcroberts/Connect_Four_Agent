@@ -5,7 +5,6 @@ import random
 
 MINNIE_MAXWELL = 2
 PLAYER = 1
-MAX_DEPTH = 5
 
 def scoring(window, player):
     score = 0
@@ -127,11 +126,11 @@ def minimax(game, depth, alpha, beta, maximizing_player):
                 break
         return best_column, value
 
-def best_move(game):
+def best_move(game, depth):
 
     column, score = minimax(
         game,
-        MAX_DEPTH,
+        depth,
         -math.inf,
         math.inf,
         True
