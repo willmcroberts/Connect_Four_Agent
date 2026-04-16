@@ -5,7 +5,6 @@ import random
 
 MINNIE_MAXWELL = 2
 PLAYER = 1
-MAX_DEPTH = 4
 
 def scoring(window, player):
     score = 0
@@ -28,8 +27,12 @@ def score_position(game, player):
 
     center_column = [board[r][3] for r in range(6)]
     score += center_column.count(player) * 3
-    # The center column is the best position on the board, because it allows for the most winning moves
 
+    for r in range(6):
+        row_array = [board[r][c] for c in range(7)]
+        for c in range(4):
+            window = row_array[c:c + 4]
+            score += scoring(window, player)
     for c in range(7):
         column_array = [board[r][c] for r in range(6)]
 
@@ -37,22 +40,22 @@ def score_position(game, player):
             window = column_array[r:r + 4]
             score += scoring(window, player)
 
-        for r in range(3):
-            for c in range(4):
-                window = [board[r + i][c + i] for i in range(4)]
-                score += scoring(window, player)
-        for r in range(3):
-            for c in range(3,7):
-                window = [board[r+i][c-i] for i in range(4)]
-                score += scoring(window, player)
-        return score
-    return None
+    for r in range(3):
+        for c in range(4):
+            window = [board[r + i][c + i] for i in range(4)]
+            score += scoring(window, player)
+    for r in range(3):
+        for c in range(3, 7):
+            window = [board[r + i][c - i] for i in range(4)]
+            score += scoring(window, player)
+    return score
+
 
 def check_terminal(game):
     return (
-        game.check_win(MINNIE_MAXWELL) or
-        game.check_win(PLAYER) or
-        game.is_draw()
+            game.check_win(MINNIE_MAXWELL) or
+            game.check_win(PLAYER) or
+            game.is_draw()
     )
 
 def minimax(game, depth, alpha, beta, maximizing_player):
@@ -79,7 +82,18 @@ def minimax(game, depth, alpha, beta, maximizing_player):
             new_game = game.copy()
             new_game.apply_move(col, MINNIE_MAXWELL)
 
-            new_score = minimax(new_game, depth - 1, alpha, beta, False)[1]
+            new_score = minimax(
+                new_game,
+                depth - 1,
+                alpha,
+                beta,
+                False
+            )[1]
+
+            # FIXED: update value properly
+            if new_score > value:
+                value = new_score
+                best_column = col
 
             alpha = max(alpha, value)
 
@@ -94,7 +108,13 @@ def minimax(game, depth, alpha, beta, maximizing_player):
             new_game = game.copy()
             new_game.apply_move(col, PLAYER)
 
-            new_score = minimax(new_game, depth - 1, alpha, beta, True)[1]
+            new_score = minimax(
+                new_game,
+                depth - 1,
+                alpha,
+                beta,
+                True
+            )[1]
 
             if new_score < value:
                 value = new_score
@@ -106,7 +126,14 @@ def minimax(game, depth, alpha, beta, maximizing_player):
                 break
         return best_column, value
 
-def best_move(game):
-    column, score = minimax(game, MAX_DEPTH, -math.inf, math.inf, True)
+def best_move(game, depth):
+
+    column, score = minimax(
+        game,
+        depth,
+        -math.inf,
+        math.inf,
+        True
+    )
 
     return column
