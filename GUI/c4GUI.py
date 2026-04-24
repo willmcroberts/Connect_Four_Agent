@@ -1,5 +1,3 @@
-# c4GUI.py
-
 import tkinter as tk
 from game.game import connect_four_game
 from game import minimax
@@ -8,17 +6,94 @@ CELL_SIZE = 80
 ROWS = 6
 COLS = 7
 
+
 class ConnectFourGUI:
 
-    def __init__(self, depth=5):
-        self.depth = depth
-        self.game = connect_four_game()
-
+    def __init__(self):
         self.window = tk.Tk()
         self.window.title("Connect Four")
 
+        self.main_frame = tk.Frame(self.window)
+        self.main_frame.pack()
+
+        self.game = None
+        self.depth = 5  # default
+
+        self.show_main_menu()
+
+    def show_main_menu(self):
+        self.clear_frame()
+
+        tk.Label(
+            self.main_frame,
+            text="Connect Four",
+            font=("Arial", 32)
+        ).pack(pady=20)
+
+        tk.Button(
+            self.main_frame,
+            text="Play",
+            font=("Arial", 20),
+            width=10,
+            command=self.show_difficulty_menu
+        ).pack(pady=10)
+
+        tk.Button(
+            self.main_frame,
+            text="Quit",
+            font=("Arial", 20),
+            width=10,
+            command=self.window.destroy
+        ).pack(pady=10)
+
+    def show_difficulty_menu(self):
+        self.clear_frame()
+
+        tk.Label(
+            self.main_frame,
+            text="Select Difficulty",
+            font=("Arial", 28)
+        ).pack(pady=20)
+
+        tk.Button(
+            self.main_frame,
+            text="Easy",
+            font=("Arial", 20),
+            width=10,
+            command=lambda: self.start_game(3)
+        ).pack(pady=10)
+
+        tk.Button(
+            self.main_frame,
+            text="Medium",
+            font=("Arial", 20),
+            width=10,
+            command=lambda: self.start_game(5)
+        ).pack(pady=10)
+
+        tk.Button(
+            self.main_frame,
+            text="Hard",
+            font=("Arial", 20),
+            width=10,
+            command=lambda: self.start_game(7)
+        ).pack(pady=10)
+
+        tk.Button(
+            self.main_frame,
+            text="Back",
+            font=("Arial", 16),
+            command=self.show_main_menu
+        ).pack(pady=20)
+
+    def start_game(self, depth):
+        self.depth = depth
+        self.game = connect_four_game()
+
+        self.clear_frame()
+
         self.canvas = tk.Canvas(
-            self.window,
+            self.main_frame,
             width=COLS * CELL_SIZE,
             height=ROWS * CELL_SIZE,
             bg="blue"
@@ -84,12 +159,13 @@ class ConnectFourGUI:
         popup.title("Game Over")
 
         tk.Label(popup, text=message, font=("Arial", 16)).pack(pady=10)
-        tk.Button(popup, text="New Game", command=self.reset).pack(pady=5)
+        tk.Button(popup, text="Play Again", command=lambda: [popup.destroy(), self.show_difficulty_menu()]).pack(pady=5)
+        tk.Button(popup, text="Main Menu", command=lambda: [popup.destroy(), self.show_main_menu()]).pack(pady=5)
         tk.Button(popup, text="Quit", command=self.window.destroy).pack(pady=5)
 
-    def reset(self):
-        self.game = connect_four_game()
-        self.draw_board()
+    def clear_frame(self):
+        for widget in self.main_frame.winfo_children():
+            widget.destroy()
 
     def run(self):
         self.window.mainloop()
