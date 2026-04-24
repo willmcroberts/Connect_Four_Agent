@@ -7,8 +7,7 @@ ROWS = 6
 COLS = 7
 
 APP_WIDTH = COLS * CELL_SIZE
-APP_HEIGHT = ROWS * CELL_SIZE
-
+APP_HEIGHT = ROWS * CELL_SIZE + 60
 
 class ConnectFourGUI:
 
@@ -17,7 +16,6 @@ class ConnectFourGUI:
         self.window.title("Connect Four")
         self.window.resizable(False, False)
 
-        # Main application frame (fixed size)
         self.app_frame = tk.Frame(self.window, width=APP_WIDTH, height=APP_HEIGHT)
         self.app_frame.pack_propagate(False)
         self.app_frame.pack()
@@ -25,6 +23,7 @@ class ConnectFourGUI:
         self.current_screen = None
         self.game = None
         self.depth = 5
+        self.last_ai_move = None
 
         self.show_main_menu()
 
@@ -73,12 +72,23 @@ class ConnectFourGUI:
     def start_game(self, depth):
         self.depth = depth
         self.game = connect_four_game()
+        self.last_ai_move = None
 
         frame = tk.Frame(self.app_frame, bg="blue")
+
+        self.turn_label = tk.Label(
+            frame,
+            text="Your Turn (Red)",
+            font=("Arial", 20, "bold"),
+            bg="blue",
+            fg="white"
+        )
+        self.turn_label.pack(pady=5)
+
         self.canvas = tk.Canvas(
             frame,
             width=APP_WIDTH,
-            height=APP_HEIGHT,
+            height=APP_HEIGHT - 60,
             bg="blue",
             highlightthickness=0
         )
@@ -110,6 +120,13 @@ class ConnectFourGUI:
 
                 self.canvas.create_oval(x1, y1, x2, y2, fill=color)
 
+                if self.last_ai_move == (r, c):
+                    self.canvas.create_oval(
+                        x1 - 4, y1 - 4, x2 + 4, y2 + 4,
+                        outline="black",
+                        width=4
+                    )
+
     def handle_click(self, event):
         col = event.x // CELL_SIZE
 
@@ -117,38 +134,55 @@ class ConnectFourGUI:
             return
 
         self.game.apply_move(col, 1)
+        self.last_ai_move = None
         self.draw_board()
 
         if self.game.check_win(1):
-            self.end_game("You win")
+            self.show_end_screen("You win!")
             return
 
         if self.game.is_draw():
-            self.end_game("Draw")
+            self.show_end_screen("It's a draw!")
             return
 
-        self.window.after(150, self.ai_move)
+        self.turn_label.config(text="AI Thinking...", fg="yellow")
+
+        self.window.after(500, self.ai_move)
 
     def ai_move(self):
         col = minimax.best_move(self.game, self.depth)
-        self.game.apply_move(col, 2)
+        row, col = self.game.apply_move(col, 2)
+        self.last_ai_move = (row, col)
+
         self.draw_board()
 
         if self.game.check_win(2):
-            self.end_game("AI wins")
-        elif self.game.is_draw():
-            self.end_game("Draw")
+            self.show_end_screen("AI wins!")
+            return
 
-    def end_game(self, message):
-        popup = tk.Toplevel(self.window)
-        popup.title("Game Over")
-        popup.geometry("300x200")
-        popup.resizable(False, False)
+        if self.game.is_draw():
+            self.show_end_screen("It's a draw!")
+            return
 
-        tk.Label(popup, text=message, font=("Arial", 20)).pack(pady=20)
-        tk.Button(popup, text="Play Again", command=lambda: [popup.destroy(), self.show_difficulty_menu()]).pack(pady=5)
-        tk.Button(popup, text="Main Menu", command=lambda: [popup.destroy(), self.show_main_menu()]).pack(pady=5)
-        tk.Button(popup, text="Quit", command=self.window.destroy).pack(pady=5)
+        # Back to human turn
+        self.turn_label.config(text="Your Turn (Red)", fg="white")
+
+    def show_end_screen(self, message):
+        frame = tk.Frame(self.app_frame, bg="#1e1e1e")
+
+        tk.Label(
+            frame,
+            text=message,
+            font=("Arial", 32, "bold"),
+            fg="white",
+            bg="#1e1e1e"
+        ).pack(pady=40)
+
+        self.make_menu_button(frame, "Play Again", self.show_difficulty_menu)
+        self.make_menu_button(frame, "Main Menu", self.show_main_menu)
+        self.make_menu_button(frame, "Quit", self.window.destroy)
+
+        self.switch_screen(frame)
 
     def make_menu_button(self, frame, text, command, small=False):
         tk.Button(
