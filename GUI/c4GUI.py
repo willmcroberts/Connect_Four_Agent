@@ -6,102 +6,87 @@ CELL_SIZE = 80
 ROWS = 6
 COLS = 7
 
+APP_WIDTH = COLS * CELL_SIZE
+APP_HEIGHT = ROWS * CELL_SIZE
+
 
 class ConnectFourGUI:
 
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Connect Four")
+        self.window.resizable(False, False)
 
-        self.main_frame = tk.Frame(self.window)
-        self.main_frame.pack()
+        # Main application frame (fixed size)
+        self.app_frame = tk.Frame(self.window, width=APP_WIDTH, height=APP_HEIGHT)
+        self.app_frame.pack_propagate(False)
+        self.app_frame.pack()
 
+        self.current_screen = None
         self.game = None
-        self.depth = 5  # default
+        self.depth = 5
 
         self.show_main_menu()
 
+    def switch_screen(self, new_frame):
+        if self.current_screen is not None:
+            self.current_screen.destroy()
+
+        self.current_screen = new_frame
+        self.current_screen.pack(fill="both", expand=True)
+
     def show_main_menu(self):
-        self.clear_frame()
+        frame = tk.Frame(self.app_frame, bg="#1e1e1e")
 
         tk.Label(
-            self.main_frame,
+            frame,
             text="Connect Four",
-            font=("Arial", 32)
-        ).pack(pady=20)
+            font=("Arial", 36, "bold"),
+            fg="white",
+            bg="#1e1e1e"
+        ).pack(pady=40)
 
-        tk.Button(
-            self.main_frame,
-            text="Play",
-            font=("Arial", 20),
-            width=10,
-            command=self.show_difficulty_menu
-        ).pack(pady=10)
+        self.make_menu_button(frame, "Play", self.show_difficulty_menu)
+        self.make_menu_button(frame, "Quit", self.window.destroy)
 
-        tk.Button(
-            self.main_frame,
-            text="Quit",
-            font=("Arial", 20),
-            width=10,
-            command=self.window.destroy
-        ).pack(pady=10)
+        self.switch_screen(frame)
 
     def show_difficulty_menu(self):
-        self.clear_frame()
+        frame = tk.Frame(self.app_frame, bg="#1e1e1e")
 
         tk.Label(
-            self.main_frame,
+            frame,
             text="Select Difficulty",
-            font=("Arial", 28)
-        ).pack(pady=20)
+            font=("Arial", 28, "bold"),
+            fg="white",
+            bg="#1e1e1e"
+        ).pack(pady=40)
 
-        tk.Button(
-            self.main_frame,
-            text="Easy",
-            font=("Arial", 20),
-            width=10,
-            command=lambda: self.start_game(3)
-        ).pack(pady=10)
+        self.make_menu_button(frame, "Easy", lambda: self.start_game(3))
+        self.make_menu_button(frame, "Medium", lambda: self.start_game(5))
+        self.make_menu_button(frame, "Hard", lambda: self.start_game(7))
 
-        tk.Button(
-            self.main_frame,
-            text="Medium",
-            font=("Arial", 20),
-            width=10,
-            command=lambda: self.start_game(5)
-        ).pack(pady=10)
+        self.make_menu_button(frame, "Back", self.show_main_menu, small=True)
 
-        tk.Button(
-            self.main_frame,
-            text="Hard",
-            font=("Arial", 20),
-            width=10,
-            command=lambda: self.start_game(7)
-        ).pack(pady=10)
-
-        tk.Button(
-            self.main_frame,
-            text="Back",
-            font=("Arial", 16),
-            command=self.show_main_menu
-        ).pack(pady=20)
+        self.switch_screen(frame)
 
     def start_game(self, depth):
         self.depth = depth
         self.game = connect_four_game()
 
-        self.clear_frame()
-
+        frame = tk.Frame(self.app_frame, bg="blue")
         self.canvas = tk.Canvas(
-            self.main_frame,
-            width=COLS * CELL_SIZE,
-            height=ROWS * CELL_SIZE,
-            bg="blue"
+            frame,
+            width=APP_WIDTH,
+            height=APP_HEIGHT,
+            bg="blue",
+            highlightthickness=0
         )
         self.canvas.pack()
 
         self.canvas.bind("<Button-1>", self.handle_click)
 
+        self.switch_screen(frame)
         self.draw_board()
 
     def draw_board(self):
@@ -142,7 +127,7 @@ class ConnectFourGUI:
             self.end_game("Draw")
             return
 
-        self.window.after(200, self.ai_move)
+        self.window.after(150, self.ai_move)
 
     def ai_move(self):
         col = minimax.best_move(self.game, self.depth)
@@ -157,15 +142,28 @@ class ConnectFourGUI:
     def end_game(self, message):
         popup = tk.Toplevel(self.window)
         popup.title("Game Over")
+        popup.geometry("300x200")
+        popup.resizable(False, False)
 
-        tk.Label(popup, text=message, font=("Arial", 16)).pack(pady=10)
+        tk.Label(popup, text=message, font=("Arial", 20)).pack(pady=20)
         tk.Button(popup, text="Play Again", command=lambda: [popup.destroy(), self.show_difficulty_menu()]).pack(pady=5)
         tk.Button(popup, text="Main Menu", command=lambda: [popup.destroy(), self.show_main_menu()]).pack(pady=5)
         tk.Button(popup, text="Quit", command=self.window.destroy).pack(pady=5)
 
-    def clear_frame(self):
-        for widget in self.main_frame.winfo_children():
-            widget.destroy()
+    def make_menu_button(self, frame, text, command, small=False):
+        tk.Button(
+            frame,
+            text=text,
+            font=("Arial", 20 if not small else 14),
+            width=12,
+            command=command,
+            bg="#3a3a3a",
+            fg="white",
+            activebackground="#555555",
+            activeforeground="white",
+            relief="flat",
+            bd=0
+        ).pack(pady=10)
 
     def run(self):
         self.window.mainloop()
