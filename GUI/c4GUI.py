@@ -12,6 +12,7 @@ APP_HEIGHT = ROWS * CELL_SIZE + 60
 class ConnectFourGUI:
 
     def __init__(self):
+        self.human_turn = True
         self.turn_label = None
         self.canvas = None
         self.window = tk.Tk()
@@ -63,15 +64,16 @@ class ConnectFourGUI:
             bg="#1e1e1e"
         ).pack(pady=40)
 
-        self.make_menu_button(frame, "Easy", lambda: self.start_game(3))
-        self.make_menu_button(frame, "Medium", lambda: self.start_game(5))
-        self.make_menu_button(frame, "Hard", lambda: self.start_game(7))
+        self.make_menu_button(frame, "Easy", lambda: self.start_game(1))
+        self.make_menu_button(frame, "Medium", lambda: self.start_game(3))
+        self.make_menu_button(frame, "Hard", lambda: self.start_game(5))
 
         self.make_menu_button(frame, "Back", self.show_main_menu, small=True)
 
         self.switch_screen(frame)
 
     def start_game(self, depth):
+        self.human_turn = True
         self.depth = depth
         self.game = connect_four_game()
         self.last_ai_move = None
@@ -130,9 +132,15 @@ class ConnectFourGUI:
                     )
 
     def handle_click(self, event):
+        if not self.human_turn:
+            return
+
+        self.human_turn = False
+
         col = event.x // CELL_SIZE
 
         if col not in self.game.legal_moves():
+            self.human_turn = True
             return
 
         self.game.apply_move(col, 1)
@@ -148,7 +156,6 @@ class ConnectFourGUI:
             return
 
         self.turn_label.config(text="AI Thinking...", fg="yellow")
-
         self.window.after(500, self.ai_move)
 
     def ai_move(self):
@@ -166,6 +173,7 @@ class ConnectFourGUI:
             self.show_end_screen("It's a draw!")
             return
 
+        self.human_turn = True
         self.turn_label.config(text="Your Turn (Red)", fg="white")
 
     def show_end_screen(self, message):
