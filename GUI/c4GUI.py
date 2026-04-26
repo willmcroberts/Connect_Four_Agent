@@ -12,6 +12,8 @@ APP_HEIGHT = ROWS * CELL_SIZE + 60
 class ConnectFourGUI:
 
     def __init__(self):
+        self.turn_label = None
+        self.canvas = None
         self.window = tk.Tk()
         self.window.title("Connect Four")
         self.window.resizable(False, False)
@@ -164,7 +166,6 @@ class ConnectFourGUI:
             self.show_end_screen("It's a draw!")
             return
 
-        # Back to human turn
         self.turn_label.config(text="Your Turn (Red)", fg="white")
 
     def show_end_screen(self, message):
@@ -184,7 +185,8 @@ class ConnectFourGUI:
 
         self.switch_screen(frame)
 
-    def make_menu_button(self, frame, text, command, small=False):
+    @staticmethod
+    def make_menu_button(frame, text, command, small=False):
         tk.Button(
             frame,
             text=text,
