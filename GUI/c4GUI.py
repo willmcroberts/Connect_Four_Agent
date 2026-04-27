@@ -82,7 +82,7 @@ class ConnectFourGUI:
 
         self.turn_label = tk.Label(
             frame,
-            text="Your Turn (Red)",
+            text="Your Turn",
             font=("Arial", 20, "bold"),
             bg="blue",
             fg="white"
@@ -174,7 +174,7 @@ class ConnectFourGUI:
             return
 
         self.human_turn = True
-        self.turn_label.config(text="Your Turn (Red)", fg="white")
+        self.turn_label.config(text="Your Turn", fg="white")
 
     def show_end_screen(self, message):
         frame = tk.Frame(self.app_frame, bg="#1e1e1e")
