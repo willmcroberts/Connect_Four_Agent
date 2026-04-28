@@ -10,7 +10,7 @@ class connect_four_game:
 
     def apply_move(self, column, player):
         for row in range(5, -1, -1):
-            if self.board[row][column] ==0:
+            if self.board[row][column] == 0:
                 self.board[row][column] = player
                 return row, column
         raise ValueError("Column is full")
@@ -49,6 +49,7 @@ class connect_four_game:
         new_env.board = [row[:] for row in self.board]
         return new_env
 
+    # For CLI testing
     def print_board(self):
         RESET = "\033[0m"
         RED = "\033[91m"
